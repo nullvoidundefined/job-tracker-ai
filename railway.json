@@ -4,7 +4,7 @@
     "buildCommand": "npm ci && npm run build"
   },
   "deploy": {
-    "startCommand": "node dist/index.js",
+    "startCommand": "npm run migrate:up && node dist/index.js",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 30
   }
