@@ -18,6 +18,10 @@ const pool = new Pool({
     : { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "true" },
 });
 
+pool.on("error", (err) => {
+  logger.error({ err }, "Unexpected idle-client error in pg pool");
+});
+
 /** Instrumented query wrapper. Logs SQL text and duration in non-production environments. */
 export async function query<T extends pg.QueryResultRow>(
   text: string,

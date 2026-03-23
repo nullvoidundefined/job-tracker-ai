@@ -131,10 +131,12 @@ if (isEntryModule) {
 
   process.on("uncaughtException", (err) => {
     logger.fatal({ err }, "Uncaught exception – shutting down");
+    logger.flush();
     process.exit(1);
   });
   process.on("unhandledRejection", (reason) => {
     logger.fatal({ reason }, "Unhandled rejection – shutting down");
+    logger.flush();
     process.exit(1);
   });
 
