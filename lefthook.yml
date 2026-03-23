@@ -8,5 +8,9 @@ pre-commit:
 
 pre-push:
   commands:
+    format:
+      run: npm run format
+    lint-fix:
+      run: npm run lint:fix
     tests:
       run: npm run test:coverage
