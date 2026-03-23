@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 
-import { uuid } from "app/utils/tests/uuids.js";
-
 import { profileSchema, updateProfileSchema } from "app/schemas/profile.js";
+import { uuid } from "app/utils/tests/uuids.js";
 
 const validProfile = {
   id: uuid(),

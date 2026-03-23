@@ -3,9 +3,8 @@ import session from "express-session";
 import supertest from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import * as profileRepo from "app/repositories/profile/profile.js";
-
 import * as profileHandlers from "app/handlers/profile/profile.js";
+import * as profileRepo from "app/repositories/profile/profile.js";
 
 vi.mock("app/repositories/profile/profile.js", () => ({
   getProfile: vi.fn(),

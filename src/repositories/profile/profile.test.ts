@@ -1,7 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import * as pool from "app/db/pool/pool.js";
-
 import * as profileRepo from "app/repositories/profile/profile.js";
 
 vi.mock("app/db/pool/pool.js", () => ({ query: vi.fn() }));
