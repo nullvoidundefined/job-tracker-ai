@@ -120,10 +120,10 @@ describe("jobs repository", () => {
       mockQuery.mockResolvedValueOnce(mockResult([mockJob]));
       const result = await jobsRepo.updateJob(jobId, userId, {});
       expect(result).toEqual(mockJob);
-      expect(mockQuery).toHaveBeenCalledWith(
-        expect.stringContaining("WHERE id = $1"),
-        [jobId, userId],
-      );
+      expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining("WHERE id = $1"), [
+        jobId,
+        userId,
+      ]);
     });
   });
 

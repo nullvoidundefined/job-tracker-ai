@@ -34,10 +34,10 @@ describe("auth repository", () => {
     const result = await authRepo.createUser("u@example.com", "password123");
 
     expect(result).toEqual(row);
-    expect(mockQuery).toHaveBeenCalledWith(
-      expect.stringContaining("INSERT INTO users"),
-      ["u@example.com", "hashed"],
-    );
+    expect(mockQuery).toHaveBeenCalledWith(expect.stringContaining("INSERT INTO users"), [
+      "u@example.com",
+      "hashed",
+    ]);
   });
 
   it("createUser throws when insert returns no row", async () => {

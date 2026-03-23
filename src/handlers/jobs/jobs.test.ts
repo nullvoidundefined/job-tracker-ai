@@ -3,14 +3,13 @@ import session from "express-session";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import * as jobHandlers from "app/handlers/jobs/jobs.js";
 import { errorHandler } from "app/middleware/errorHandler/errorHandler.js";
 import { requireAuth } from "app/middleware/requireAuth/requireAuth.js";
 import * as jobsRepo from "app/repositories/jobs/jobs.js";
 import type { Job } from "app/schemas/job.js";
 import { expectError, expectListResponse } from "app/utils/tests/responseHelpers.js";
 import { uuid } from "app/utils/tests/uuids.js";
-
-import * as jobHandlers from "app/handlers/jobs/jobs.js";
 
 vi.mock("app/repositories/jobs/jobs.js");
 vi.mock("app/utils/logs/logger.js", () => ({
