@@ -20,6 +20,7 @@ import { requestLogger } from "app/middleware/requestLogger/requestLogger.js";
 import { loadSession } from "app/middleware/requireAuth/requireAuth.js";
 import { authRouter } from "app/routes/auth.js";
 import { jobsRouter } from "app/routes/jobs.js";
+import { profileRouter } from "app/routes/profile.js";
 import { logger } from "app/utils/logs/logger.js";
 
 function validateEnv(): void {
@@ -113,6 +114,7 @@ query("SELECT NOW()")
 
 app.use("/auth", authRouter);
 app.use("/jobs", jobsRouter);
+app.use("/profile", profileRouter);
 
 // Attach reusable utilities for 404 and error handling.
 app.use(notFoundHandler);

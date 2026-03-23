@@ -8,6 +8,7 @@ import { describe, expect, it, vi } from "vitest";
 
 import { authRouter } from "app/routes/auth.js";
 import { jobsRouter } from "app/routes/jobs.js";
+import { profileRouter } from "app/routes/profile.js";
 import { uuid } from "app/utils/tests/uuids.js";
 
 vi.mock("app/handlers/auth/auth.js", () => ({
@@ -23,6 +24,10 @@ vi.mock("app/handlers/jobs/jobs.js", () => ({
   updateJob: (_: express.Request, res: express.Response) => res.status(200).json({ ok: true }),
   deleteJob: (_: express.Request, res: express.Response) => res.status(204).send(),
 }));
+vi.mock("app/handlers/profile/profile.js", () => ({
+  getProfile: (_: express.Request, res: express.Response) => res.status(200).json({ ok: true }),
+  updateProfile: (_: express.Request, res: express.Response) => res.status(200).json({ ok: true }),
+}));
 vi.mock("app/middleware/rateLimiter/rateLimiter.js", () => ({
   authRateLimiter: (_: express.Request, __: express.Response, next: express.NextFunction) => next(),
 }));
@@ -37,6 +42,7 @@ const app = express();
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use("/jobs", jobsRouter);
+app.use("/profile", profileRouter);
 
 describe("route wiring", () => {
   describe("auth", () => {
@@ -80,6 +86,17 @@ describe("route wiring", () => {
     it("DELETE /jobs/:id → 204", async () => {
       const res = await request(app).delete(`/jobs/${jobId}`);
       expect(res.status).toBe(204);
+    });
+  });
+
+  describe("profile", () => {
+    it("GET /profile → 200", async () => {
+      const res = await request(app).get("/profile");
+      expect(res.status).toBe(200);
+    });
+    it("PUT /profile → 200", async () => {
+      const res = await request(app).put("/profile").send({});
+      expect(res.status).toBe(200);
     });
   });
 });
