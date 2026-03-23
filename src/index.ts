@@ -137,7 +137,9 @@ if (isEntryModule) {
     process.exit(1);
   });
 
-  const server = app.listen(PORT, HOST, () => logger.info({ port: PORT, host: HOST }, "Server running"));
+  const server = app.listen(PORT, HOST, () =>
+    logger.info({ port: PORT, host: HOST }, "Server running"),
+  );
 
   async function shutdown(signal: string) {
     logger.info({ signal }, "Shutting down gracefully");
