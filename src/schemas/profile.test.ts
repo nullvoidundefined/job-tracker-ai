@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { uuid } from "app/utils/tests/uuids.js";
 
-import { profileSchema, updateProfileSchema } from "./profile.js";
+import { profileSchema, updateProfileSchema } from "app/schemas/profile.js";
 
 const validProfile = {
   id: uuid(),

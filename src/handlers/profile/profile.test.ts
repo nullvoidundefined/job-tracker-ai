@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import * as profileRepo from "app/repositories/profile/profile.js";
 
-import * as profileHandlers from "./profile.js";
+import * as profileHandlers from "app/handlers/profile/profile.js";
 
 vi.mock("app/repositories/profile/profile.js", () => ({
   getProfile: vi.fn(),
