@@ -53,6 +53,16 @@ app.use(corsConfig);
 // Attach structured request/response logging (with request IDs) early so all downstream handlers are observable.
 app.use(requestLogger);
 
+// Health check sits above session/CSRF/auth middleware so Railway's probe always reaches it.
+app.get("/health", async (_req, res) => {
+  try {
+    await query("SELECT 1");
+    res.status(200).json({ status: "ok", db: "connected" });
+  } catch {
+    res.status(503).json({ status: "degraded", db: "disconnected" });
+  }
+});
+
 // Apply a basic rate limiter to protect the API from simple abuse and accidental client floods.
 app.use(rateLimiter);
 
@@ -100,15 +110,6 @@ app.use((_req, res, next) => {
 query("SELECT NOW()")
   .then(() => logger.info("Connected to database"))
   .catch((err: unknown) => logger.error({ err }, "Database connection failed"));
-
-app.get("/health", async (_req, res) => {
-  try {
-    await query("SELECT 1");
-    res.status(200).json({ status: "ok", db: "connected" });
-  } catch {
-    res.status(503).json({ status: "degraded", db: "disconnected" });
-  }
-});
 
 app.use("/auth", authRouter);
 app.use("/jobs", jobsRouter);
