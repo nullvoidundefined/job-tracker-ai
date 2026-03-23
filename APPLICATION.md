@@ -9,13 +9,13 @@ A job application tracker where users can manually add jobs or paste a raw job d
 
 ## Hosting & Infrastructure
 
-| Service | Provider | Notes |
-|---------|----------|-------|
-| API Server | Railway | Express + TypeScript |
-| Database | Neon | PostgreSQL with connection pooling |
-| Auth | Custom session-based | express-session + connect-pg-simple |
-| LLM | Anthropic Claude API | claude-sonnet-4-20250514 for extraction |
-| Frontend | None (API-only) | REST endpoints, tested via Vitest + httpie/curl |
+| Service    | Provider             | Notes                                           |
+| ---------- | -------------------- | ----------------------------------------------- |
+| API Server | Railway              | Express + TypeScript                            |
+| Database   | Neon                 | PostgreSQL with connection pooling              |
+| Auth       | Custom session-based | express-session + connect-pg-simple             |
+| LLM        | Anthropic Claude API | claude-sonnet-4-20250514 for extraction         |
+| Frontend   | None (API-only)      | REST endpoints, tested via Vitest + httpie/curl |
 
 **Why API-only for App 1:** This is backend fundamentals. No frontend distraction. Test everything via integration tests and manual API calls. The frontend pattern starts in App 2.
 
@@ -24,6 +24,7 @@ A job application tracker where users can manually add jobs or paste a raw job d
 ## Project Setup
 
 Start from **Express template**. The template provides:
+
 - TypeScript + ESLint + Prettier config
 - Express server scaffold with error handling middleware
 - Vitest setup with supertest for integration tests
@@ -66,7 +67,7 @@ Express API Server (Railway)
   |     +-- Return structured job data
   |
   +-- Resume profile routes (GET/PUT)
-  
+
 PostgreSQL (Neon)
   +-- users (id, email, password_hash, created_at)
   +-- resume_profiles (id, user_id, skills[], experience_summary, updated_at)
@@ -142,6 +143,7 @@ Start with POC tasks only. Get CRUD + auth + deploy working before AI integratio
 Prompt templates must live in `src/prompts/` as separate TypeScript files exporting template functions. Not inline strings. This pattern carries forward to prompt versioning in App 8.
 
 File structure after completion:
+
 ```
 src/
   middleware/    -- auth, csrf, rate-limit, error-handler
