@@ -1,5 +1,5 @@
 import { query } from "app/db/pool/pool.js";
-import type { Job, CreateJobInput, UpdateJobInput } from "app/schemas/job.js";
+import type { Job, CreateJobInput, InternalUpdateJobInput } from "app/schemas/job.js";
 
 export async function listJobs(
   userId: string,
@@ -56,7 +56,7 @@ export async function createJob(userId: string, input: CreateJobInput): Promise<
 export async function updateJob(
   id: string,
   userId: string,
-  input: UpdateJobInput,
+  input: InternalUpdateJobInput,
 ): Promise<Job | null> {
   const fields = Object.entries(input).filter(([, v]) => v !== undefined);
   if (fields.length === 0) return getJobById(id, userId);

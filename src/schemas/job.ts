@@ -34,6 +34,13 @@ export const createJobSchema = z.object({
 
 export const updateJobSchema = createJobSchema;
 
+/** Extended update schema that includes AI-generated fields (used internally by analyzer). */
+export const internalUpdateJobSchema = createJobSchema.extend({
+  fit_score: z.number().int().min(0).max(100).optional(),
+  fit_explanation: z.string().optional(),
+});
+
 export type Job = z.infer<typeof jobSchema>;
 export type CreateJobInput = z.infer<typeof createJobSchema>;
 export type UpdateJobInput = z.infer<typeof updateJobSchema>;
+export type InternalUpdateJobInput = z.infer<typeof internalUpdateJobSchema>;
