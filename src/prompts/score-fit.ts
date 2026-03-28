@@ -14,16 +14,16 @@ export function buildFitScorePrompt(
 - explanation (string): A 1-3 sentence explanation of the fit assessment, noting key matches and gaps.
 
 <job>
-Title: ${jobTitle ?? "Not specified"}
-Requirements: ${jobRequirements.length > 0 ? jobRequirements.join(", ") : "None listed"}
-Tech Stack: ${techStack.length > 0 ? techStack.join(", ") : "None listed"}
+Title: ${jobTitle ?? 'Not specified'}
+Requirements: ${jobRequirements.length > 0 ? jobRequirements.join(', ') : 'None listed'}
+Tech Stack: ${techStack.length > 0 ? techStack.join(', ') : 'None listed'}
 </job>
 
 <candidate>
-Current Title: ${jobTitle2 ?? "Not specified"}
-Years of Experience: ${yearsOfExperience ?? "Not specified"}
-Skills: ${candidateSkills.length > 0 ? candidateSkills.join(", ") : "None listed"}
-Experience Summary: ${experienceSummary ?? "Not provided"}
+Current Title: ${jobTitle2 ?? 'Not specified'}
+Years of Experience: ${yearsOfExperience ?? 'Not specified'}
+Skills: ${candidateSkills.length > 0 ? candidateSkills.join(', ') : 'None listed'}
+Experience Summary: ${experienceSummary ?? 'Not provided'}
 </candidate>
 
 Return ONLY a JSON object with "score" and "explanation" fields.`;

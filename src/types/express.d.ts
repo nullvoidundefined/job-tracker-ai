@@ -1,4 +1,4 @@
-import type { User } from "app/schemas/auth.js";
+import type { User } from 'app/schemas/auth.js';
 
 declare global {
   namespace Express {
@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-declare module "express-session" {
+declare module 'express-session' {
   interface SessionData {
     userId?: string;
   }

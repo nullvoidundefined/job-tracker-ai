@@ -1,6 +1,9 @@
 export const EXTRACTION_SYSTEM_PROMPT = `You are a job description parser. Extract structured data from raw job descriptions. Return ONLY valid JSON matching the specified schema. Do not include any text outside the JSON object.`;
 
-export function buildExtractionPrompt(rawDescription: string, validationError?: string): string {
+export function buildExtractionPrompt(
+  rawDescription: string,
+  validationError?: string,
+): string {
   let prompt = `Extract the following fields from this job description and return them as a JSON object:
 
 - title (string or null): The job title

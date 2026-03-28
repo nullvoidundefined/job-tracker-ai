@@ -30,8 +30,8 @@ npm install -D drizzle-kit @types/pg dotenv
 
 ```typescript
 // src/db.ts
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 export const db = drizzle({ client: pool });
@@ -46,10 +46,11 @@ npm install -D drizzle-kit @types/pg
 
 ```typescript
 // src/db.ts
-import { attachDatabasePool } from "@vercel/functions";
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
-import * as schema from "./schema";
+import { attachDatabasePool } from '@vercel/functions';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { Pool } from 'pg';
+
+import * as schema from './schema';
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 attachDatabasePool(pool);
@@ -68,8 +69,8 @@ npm install -D drizzle-kit dotenv
 
 ```typescript
 // src/db.ts
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql);
@@ -84,9 +85,9 @@ npm install -D drizzle-kit dotenv @types/ws
 
 ```typescript
 // src/db.ts
-import { drizzle } from "drizzle-orm/neon-serverless";
-import { Pool, neonConfig } from "@neondatabase/serverless";
-import ws from "ws";
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
 
 neonConfig.webSocketConstructor = ws; // Required for Node.js < v22
 
@@ -98,15 +99,15 @@ export const db = drizzle(pool);
 
 ```typescript
 // drizzle.config.ts
-import { config } from "dotenv";
-import { defineConfig } from "drizzle-kit";
+import { config } from 'dotenv';
+import { defineConfig } from 'drizzle-kit';
 
-config({ path: ".env.local" });
+config({ path: '.env.local' });
 
 export default defineConfig({
-  schema: "./src/schema.ts",
-  out: "./drizzle",
-  dialect: "postgresql",
+  schema: './src/schema.ts',
+  out: './drizzle',
+  dialect: 'postgresql',
   dbCredentials: {
     url: process.env.DATABASE_URL!,
   },
@@ -127,27 +128,27 @@ npx drizzle-kit migrate
 
 ```typescript
 // src/schema.ts
-import { pgTable, serial, text, integer, timestamp } from "drizzle-orm/pg-core";
+import { integer, pgTable, serial, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const usersTable = pgTable("users", {
-  id: serial("id").primaryKey(),
-  name: text("name").notNull(),
-  email: text("email").notNull().unique(),
-  role: text("role").default("user").notNull(),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+export const usersTable = pgTable('users', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull(),
+  email: text('email').notNull().unique(),
+  role: text('role').default('user').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export type User = typeof usersTable.$inferSelect;
 export type NewUser = typeof usersTable.$inferInsert;
 
-export const postsTable = pgTable("posts", {
-  id: serial("id").primaryKey(),
-  title: text("title").notNull(),
-  content: text("content").notNull(),
-  userId: integer("user_id")
+export const postsTable = pgTable('posts', {
+  id: serial('id').primaryKey(),
+  title: text('title').notNull(),
+  content: text('content').notNull(),
+  userId: integer('user_id')
     .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
 export type Post = typeof postsTable.$inferSelect;
@@ -167,13 +168,13 @@ export async function batchInsertUsers(users: NewUser[]) {
 ### Prepared Statements
 
 ```typescript
-import { sql } from "drizzle-orm";
+import { sql } from 'drizzle-orm';
 
 export const getUsersByRolePrepared = db
   .select()
   .from(usersTable)
   .where(sql`${usersTable.role} = $1`)
-  .prepare("get_users_by_role");
+  .prepare('get_users_by_role');
 
 // Usage: getUsersByRolePrepared.execute(['admin'])
 ```
@@ -202,13 +203,13 @@ export async function createUserWithPosts(user: NewUser, posts: NewPost[]) {
 ## Working with Neon Branches
 
 ```typescript
-import { drizzle } from "drizzle-orm/neon-http";
-import { neon } from "@neondatabase/serverless";
+import { neon } from '@neondatabase/serverless';
+import { drizzle } from 'drizzle-orm/neon-http';
 
 const getBranchUrl = () => {
   const env = process.env.NODE_ENV;
-  if (env === "development") return process.env.DEV_DATABASE_URL;
-  if (env === "test") return process.env.TEST_DATABASE_URL;
+  if (env === 'development') return process.env.DEV_DATABASE_URL;
+  if (env === 'test') return process.env.TEST_DATABASE_URL;
   return process.env.DATABASE_URL;
 };
 
@@ -219,12 +220,14 @@ export const db = drizzle({ client: sql });
 ## Error Handling
 
 ```typescript
-export async function safeNeonOperation<T>(operation: () => Promise<T>): Promise<T> {
+export async function safeNeonOperation<T>(
+  operation: () => Promise<T>,
+): Promise<T> {
   try {
     return await operation();
   } catch (error: any) {
-    if (error.message?.includes("connection pool timeout")) {
-      console.error("Neon connection pool timeout");
+    if (error.message?.includes('connection pool timeout')) {
+      console.error('Neon connection pool timeout');
     }
     throw error;
   }

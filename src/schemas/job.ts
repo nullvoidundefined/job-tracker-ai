@@ -1,6 +1,12 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-const JOB_STATUSES = ["applied", "interviewing", "offer", "rejected", "saved"] as const;
+const JOB_STATUSES = [
+  'applied',
+  'interviewing',
+  'offer',
+  'rejected',
+  'saved',
+] as const;
 
 export const jobSchema = z.object({
   id: z.string().uuid(),

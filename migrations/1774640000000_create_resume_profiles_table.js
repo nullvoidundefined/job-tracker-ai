@@ -4,22 +4,26 @@
  * @param pgm {import('node-pg-migrate').MigrationBuilder}
  */
 export const up = (pgm) => {
-  pgm.createTable("resume_profiles", {
-    id: { type: "uuid", primaryKey: true, default: pgm.func("gen_random_uuid()") },
+  pgm.createTable('resume_profiles', {
+    id: {
+      type: 'uuid',
+      primaryKey: true,
+      default: pgm.func('gen_random_uuid()'),
+    },
     user_id: {
-      type: "uuid",
+      type: 'uuid',
       notNull: true,
       unique: true,
-      references: "users",
-      onDelete: "CASCADE",
+      references: 'users',
+      onDelete: 'CASCADE',
     },
-    skills: { type: "text[]", default: pgm.func("'{}'::text[]") },
-    experience_summary: { type: "text" },
-    education: { type: "text" },
-    job_title: { type: "text" },
-    years_of_experience: { type: "integer" },
-    created_at: { type: "timestamptz", default: pgm.func("NOW()") },
-    updated_at: { type: "timestamptz", default: pgm.func("NOW()") },
+    skills: { type: 'text[]', default: pgm.func("'{}'::text[]") },
+    experience_summary: { type: 'text' },
+    education: { type: 'text' },
+    job_title: { type: 'text' },
+    years_of_experience: { type: 'integer' },
+    created_at: { type: 'timestamptz', default: pgm.func('NOW()') },
+    updated_at: { type: 'timestamptz', default: pgm.func('NOW()') },
   });
 
   pgm.sql(`
@@ -30,6 +34,8 @@ export const up = (pgm) => {
 
 /** @param pgm {import('node-pg-migrate').MigrationBuilder} */
 export const down = (pgm) => {
-  pgm.sql("DROP TRIGGER IF EXISTS set_resume_profiles_updated_at ON resume_profiles;");
-  pgm.dropTable("resume_profiles");
+  pgm.sql(
+    'DROP TRIGGER IF EXISTS set_resume_profiles_updated_at ON resume_profiles;',
+  );
+  pgm.dropTable('resume_profiles');
 };

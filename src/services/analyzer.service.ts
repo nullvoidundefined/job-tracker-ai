@@ -1,18 +1,23 @@
-import crypto from "node:crypto";
-
-import { EXTRACTION_SYSTEM_PROMPT, buildExtractionPrompt } from "app/prompts/extract-job.js";
-import { FIT_SCORE_SYSTEM_PROMPT, buildFitScorePrompt } from "app/prompts/score-fit.js";
-import * as jobsRepo from "app/repositories/jobs/jobs.js";
-import * as profileRepo from "app/repositories/profile/profile.js";
+import {
+  EXTRACTION_SYSTEM_PROMPT,
+  buildExtractionPrompt,
+} from 'app/prompts/extract-job.js';
+import {
+  FIT_SCORE_SYSTEM_PROMPT,
+  buildFitScorePrompt,
+} from 'app/prompts/score-fit.js';
+import * as jobsRepo from 'app/repositories/jobs/jobs.js';
+import * as profileRepo from 'app/repositories/profile/profile.js';
 import {
   type FitScore,
   type JobExtraction,
   fitScoreSchema,
   jobExtractionSchema,
-} from "app/schemas/job-extraction.js";
-import type { Job } from "app/schemas/job.js";
-import { callClaude } from "app/services/anthropic.service.js";
-import { logger } from "app/utils/logs/logger.js";
+} from 'app/schemas/job-extraction.js';
+import type { Job } from 'app/schemas/job.js';
+import { callClaude } from 'app/services/anthropic.service.js';
+import { logger } from 'app/utils/logs/logger.js';
+import crypto from 'node:crypto';
 
 const MAX_RETRIES = 2;
 
@@ -20,20 +25,24 @@ const MAX_RETRIES = 2;
 const analysisCache = new Map<string, JobExtraction>();
 
 function hashDescription(text: string): string {
-  return crypto.createHash("sha256").update(text.trim()).digest("hex");
+  return crypto.createHash('sha256').update(text.trim()).digest('hex');
 }
 
 function parseJSON(text: string): unknown {
   // Strip markdown code fences if the LLM wraps its response
-  const stripped = text.replace(/^```(?:json)?\s*\n?/i, "").replace(/\n?```\s*$/i, "");
+  const stripped = text
+    .replace(/^```(?:json)?\s*\n?/i, '')
+    .replace(/\n?```\s*$/i, '');
   return JSON.parse(stripped);
 }
 
-export async function extractJobDescription(rawDescription: string): Promise<JobExtraction> {
+export async function extractJobDescription(
+  rawDescription: string,
+): Promise<JobExtraction> {
   const hash = hashDescription(rawDescription);
   const cached = analysisCache.get(hash);
   if (cached) {
-    logger.debug({ hash }, "Returning cached extraction");
+    logger.debug({ hash }, 'Returning cached extraction');
     return cached;
   }
 
@@ -50,7 +59,10 @@ export async function extractJobDescription(rawDescription: string): Promise<Job
       return result;
     } catch (err) {
       lastError = err instanceof Error ? err.message : String(err);
-      logger.warn({ attempt, error: lastError }, "Extraction validation failed, retrying");
+      logger.warn(
+        { attempt, error: lastError },
+        'Extraction validation failed, retrying',
+      );
     }
   }
 
@@ -88,14 +100,22 @@ export async function scoreFit(
       return fitScoreSchema.parse(parsed);
     } catch (err) {
       lastError = err instanceof Error ? err.message : String(err);
-      logger.warn({ attempt, error: lastError }, "Fit score validation failed, retrying");
+      logger.warn(
+        { attempt, error: lastError },
+        'Fit score validation failed, retrying',
+      );
     }
   }
 
-  throw new Error(`Failed to score fit after ${MAX_RETRIES + 1} attempts: ${lastError}`);
+  throw new Error(
+    `Failed to score fit after ${MAX_RETRIES + 1} attempts: ${lastError}`,
+  );
 }
 
-export async function analyzeAndSaveJob(rawDescription: string, userId: string): Promise<Job> {
+export async function analyzeAndSaveJob(
+  rawDescription: string,
+  userId: string,
+): Promise<Job> {
   const extraction = await extractJobDescription(rawDescription);
   const fitResult = await scoreFit(extraction, userId);
 
@@ -107,8 +127,8 @@ export async function analyzeAndSaveJob(rawDescription: string, userId: string):
     tech_stack: extraction.tech_stack,
     salary_range: extraction.salary_range ?? undefined,
     raw_description: rawDescription,
-    source: "ai-analyzed",
-    status: "saved",
+    source: 'ai-analyzed',
+    status: 'saved',
   });
 
   if (fitResult) {

@@ -30,7 +30,7 @@ npm install @neondatabase/neon-js@latest
 
 ```typescript
 // lib/auth/server.ts
-import { createNeonAuth } from "@neondatabase/neon-js/auth/next/server";
+import { createNeonAuth } from '@neondatabase/neon-js/auth/next/server';
 
 export const auth = createNeonAuth({
   baseUrl: process.env.NEON_AUTH_BASE_URL!,
@@ -44,7 +44,8 @@ export const auth = createNeonAuth({
 
 ```typescript
 // app/api/auth/[...path]/route.ts
-import { auth } from "@/lib/auth/server";
+import { auth } from '@/lib/auth/server';
+
 export const { GET, POST } = auth.handler();
 ```
 
@@ -52,8 +53,20 @@ export const { GET, POST } = auth.handler();
 
 ```typescript
 // lib/auth/client.ts
-"use client";
-import { createAuthClient } from "@neondatabase/neon-js/auth/next";
+'use client';
+
+import { createAuthClient } from '@neondatabase/neon-js/auth/next';
+
+// lib/auth/client.ts
+
+// lib/auth/client.ts
+
+// lib/auth/client.ts
+
+// lib/auth/client.ts
+
+// lib/auth/client.ts
+
 export const authClient = createAuthClient();
 ```
 
@@ -61,8 +74,9 @@ export const authClient = createAuthClient();
 
 ```typescript
 // lib/db/client.ts
-import { createClient } from "@neondatabase/neon-js";
-import type { Database } from "./database.types";
+import { createClient } from '@neondatabase/neon-js';
+
+import type { Database } from './database.types';
 
 export const dbClient = createClient<Database>({
   auth: { url: process.env.NEON_AUTH_BASE_URL! },
@@ -75,7 +89,7 @@ export const dbClient = createClient<Database>({
 ### React SPA
 
 ```typescript
-import { createAuthClient } from "@neondatabase/neon-js/auth";
+import { createAuthClient } from '@neondatabase/neon-js/auth';
 
 const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL);
 ```
@@ -87,7 +101,7 @@ const authClient = createAuthClient(import.meta.env.VITE_NEON_AUTH_URL);
 ### React SPA with Data API
 
 ```typescript
-import { createClient } from "@neondatabase/neon-js";
+import { createClient } from '@neondatabase/neon-js';
 
 const client = createClient<Database>({
   auth: { url: import.meta.env.VITE_NEON_AUTH_URL },
@@ -251,19 +265,25 @@ export default async function PostsPage() {
 
 ```typescript
 // app/api/posts/route.ts
-import { dbClient } from "@/lib/db/client";
-import { NextResponse } from "next/server";
+import { dbClient } from '@/lib/db/client';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  const { data, error } = await dbClient.from("posts").select();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  const { data, error } = await dbClient.from('posts').select();
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 500 });
   return NextResponse.json(data);
 }
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { data, error } = await dbClient.from("posts").insert(body).select().single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+  const { data, error } = await dbClient
+    .from('posts')
+    .insert(body)
+    .select()
+    .single();
+  if (error)
+    return NextResponse.json({ error: error.message }, { status: 400 });
   return NextResponse.json(data, { status: 201 });
 }
 ```
@@ -278,15 +298,15 @@ await client.auth.signUp.email({ email, password, name });
 await client.auth.signOut();
 const { data: session } = await client.auth.getSession();
 await client.auth.signIn.social({
-  provider: "google",
-  callbackURL: "/dashboard",
+  provider: 'google',
+  callbackURL: '/dashboard',
 });
 ```
 
 ### Supabase-Compatible API
 
 ```typescript
-import { createClient, SupabaseAuthAdapter } from "@neondatabase/neon-js";
+import { SupabaseAuthAdapter, createClient } from '@neondatabase/neon-js';
 
 const client = createClient({
   auth: { adapter: SupabaseAuthAdapter(), url },
@@ -402,13 +422,13 @@ Choose ONE method. Never import both -- causes duplicate styles:
 
 ```css
 /* With Tailwind v4 */
-@import "tailwindcss";
-@import "@neondatabase/neon-js/ui/tailwind";
+@import 'tailwindcss';
+@import '@neondatabase/neon-js/ui/tailwind';
 ```
 
 ```typescript
 /* Without Tailwind */
-import "@neondatabase/neon-js/ui/css";
+import '@neondatabase/neon-js/ui/css';
 ```
 
 ### Missing "use client" directive
@@ -416,8 +436,10 @@ import "@neondatabase/neon-js/ui/css";
 Required for any component using `useSession()` or other React hooks:
 
 ```typescript
-"use client"; // Required!
-import { authClient } from "@/lib/auth/client";
+'use client';
+
+// Required!
+import { authClient } from '@/lib/auth/client';
 ```
 
 ### Wrong API for adapter type

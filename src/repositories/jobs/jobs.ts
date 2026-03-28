@@ -1,5 +1,9 @@
-import { query } from "app/db/pool/pool.js";
-import type { Job, CreateJobInput, InternalUpdateJobInput } from "app/schemas/job.js";
+import { query } from 'app/db/pool/pool.js';
+import type {
+  CreateJobInput,
+  InternalUpdateJobInput,
+  Job,
+} from 'app/schemas/job.js';
 
 export async function listJobs(
   userId: string,
@@ -11,25 +15,32 @@ export async function listJobs(
       `SELECT * FROM jobs WHERE user_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3`,
       [userId, limit, offset],
     ),
-    query<{ count: string }>(`SELECT COUNT(*)::text AS count FROM jobs WHERE user_id = $1`, [
-      userId,
-    ]),
+    query<{ count: string }>(
+      `SELECT COUNT(*)::text AS count FROM jobs WHERE user_id = $1`,
+      [userId],
+    ),
   ]);
   return {
     jobs: dataResult.rows,
-    total: parseInt(countResult.rows[0]?.count ?? "0", 10),
+    total: parseInt(countResult.rows[0]?.count ?? '0', 10),
   };
 }
 
-export async function getJobById(id: string, userId: string): Promise<Job | null> {
-  const result = await query<Job>(`SELECT * FROM jobs WHERE id = $1 AND user_id = $2`, [
-    id,
-    userId,
-  ]);
+export async function getJobById(
+  id: string,
+  userId: string,
+): Promise<Job | null> {
+  const result = await query<Job>(
+    `SELECT * FROM jobs WHERE id = $1 AND user_id = $2`,
+    [id, userId],
+  );
   return result.rows[0] ?? null;
 }
 
-export async function createJob(userId: string, input: CreateJobInput): Promise<Job> {
+export async function createJob(
+  userId: string,
+  input: CreateJobInput,
+): Promise<Job> {
   const result = await query<Job>(
     `INSERT INTO jobs (user_id, title, company, location, requirements, tech_stack,
       salary_range, status, raw_description, source)
@@ -43,13 +54,13 @@ export async function createJob(userId: string, input: CreateJobInput): Promise<
       input.requirements ?? [],
       input.tech_stack ?? [],
       input.salary_range ?? null,
-      input.status ?? "applied",
+      input.status ?? 'applied',
       input.raw_description ?? null,
       input.source ?? null,
     ],
   );
   const row = result.rows[0];
-  if (!row) throw new Error("Insert returned no row");
+  if (!row) throw new Error('Insert returned no row');
   return row;
 }
 
@@ -61,7 +72,9 @@ export async function updateJob(
   const fields = Object.entries(input).filter(([, v]) => v !== undefined);
   if (fields.length === 0) return getJobById(id, userId);
 
-  const setClauses = fields.map(([key], i) => `"${key}" = $${i + 3}`).join(", ");
+  const setClauses = fields
+    .map(([key], i) => `"${key}" = $${i + 3}`)
+    .join(', ');
   const values = fields.map(([, v]) => v);
 
   const result = await query<Job>(
@@ -72,6 +85,9 @@ export async function updateJob(
 }
 
 export async function deleteJob(id: string, userId: string): Promise<boolean> {
-  const result = await query(`DELETE FROM jobs WHERE id = $1 AND user_id = $2`, [id, userId]);
+  const result = await query(
+    `DELETE FROM jobs WHERE id = $1 AND user_id = $2`,
+    [id, userId],
+  );
   return (result.rowCount ?? 0) > 0;
 }

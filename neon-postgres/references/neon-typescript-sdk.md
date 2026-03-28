@@ -15,7 +15,7 @@ npm install @neondatabase/api-client
 ## Authentication
 
 ```typescript
-import { createApiClient } from "@neondatabase/api-client";
+import { createApiClient } from '@neondatabase/api-client';
 
 const apiClient = createApiClient({ apiKey: process.env.NEON_API_KEY! });
 ```
@@ -128,7 +128,7 @@ try {
 ## Key Types
 
 ```typescript
-import { EndpointType, MemberRole } from "@neondatabase/api-client";
+import { EndpointType, MemberRole } from '@neondatabase/api-client';
 
 // EndpointType.ReadWrite, EndpointType.ReadOnly
 // MemberRole.Admin, MemberRole.Member

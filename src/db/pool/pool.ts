@@ -1,7 +1,6 @@
-import pg from "pg";
-
-import { isProduction } from "app/config/env.js";
-import { logger } from "app/utils/logs/logger.js";
+import { isProduction } from 'app/config/env.js';
+import { logger } from 'app/utils/logs/logger.js';
+import pg from 'pg';
 
 const { Pool } = pg;
 
@@ -14,12 +13,18 @@ const pool = new Pool({
   connectionTimeoutMillis: 5_000,
   statement_timeout: 10_000,
   ssl: isProduction()
-    ? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== "false" }
-    : { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === "true" },
+    ? {
+        rejectUnauthorized:
+          process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false',
+      }
+    : {
+        rejectUnauthorized:
+          process.env.DATABASE_SSL_REJECT_UNAUTHORIZED === 'true',
+      },
 });
 
-pool.on("error", (err) => {
-  logger.error({ err }, "Unexpected idle-client error in pg pool");
+pool.on('error', (err) => {
+  logger.error({ err }, 'Unexpected idle-client error in pg pool');
 });
 
 /** Instrumented query wrapper. Logs SQL text and duration in non-production environments. */
@@ -31,10 +36,12 @@ export async function query<T extends pg.QueryResultRow>(
   const start = Date.now();
   const target = client ?? pool;
   const result =
-    values !== undefined ? await target.query<T>(text, values) : await target.query<T>(text);
+    values !== undefined
+      ? await target.query<T>(text, values)
+      : await target.query<T>(text);
   const duration = Date.now() - start;
-  if (process.env.NODE_ENV !== "production") {
-    logger.debug({ query: text, duration_ms: duration }, "db query");
+  if (process.env.NODE_ENV !== 'production') {
+    logger.debug({ query: text, duration_ms: duration }, 'db query');
   }
   return result;
 }
@@ -43,15 +50,17 @@ export async function query<T extends pg.QueryResultRow>(
  * Runs a callback inside a database transaction. On success commits; on error rolls back and rethrows.
  * Use this when multiple operations must succeed or fail together (e.g. register = createUser + createSession).
  */
-export async function withTransaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
+export async function withTransaction<T>(
+  fn: (client: PoolClient) => Promise<T>,
+): Promise<T> {
   const client = await pool.connect();
   try {
-    await query("BEGIN", undefined, client);
+    await query('BEGIN', undefined, client);
     const result = await fn(client);
-    await query("COMMIT", undefined, client);
+    await query('COMMIT', undefined, client);
     return result;
   } catch (err) {
-    await query("ROLLBACK", undefined, client);
+    await query('ROLLBACK', undefined, client);
     throw err;
   } finally {
     client.release();
