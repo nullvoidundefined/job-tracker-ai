@@ -1,6 +1,3 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-
 import connectPgSimple from "connect-pg-simple";
 import cookieParser from "cookie-parser";
 import express from "express";
