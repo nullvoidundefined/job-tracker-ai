@@ -3,6 +3,7 @@ import { errorHandler } from 'app/middleware/errorHandler/errorHandler.js';
 import { requireAuth } from 'app/middleware/requireAuth/requireAuth.js';
 import * as jobsRepo from 'app/repositories/jobs/jobs.js';
 import type { Job } from 'app/schemas/job.js';
+import { asyncHandler } from 'app/utils/asyncHandler.js';
 import {
   expectError,
   expectListResponse,
@@ -57,11 +58,11 @@ app.use((req, _res, next) => {
 });
 
 app.use(requireAuth);
-app.get('/jobs', jobHandlers.listJobs);
-app.post('/jobs', jobHandlers.createJob);
-app.get('/jobs/:id', jobHandlers.getJob);
-app.put('/jobs/:id', jobHandlers.updateJob);
-app.delete('/jobs/:id', jobHandlers.deleteJob);
+app.get('/jobs', asyncHandler(jobHandlers.listJobs));
+app.post('/jobs', asyncHandler(jobHandlers.createJob));
+app.get('/jobs/:id', asyncHandler(jobHandlers.getJob));
+app.put('/jobs/:id', asyncHandler(jobHandlers.updateJob));
+app.delete('/jobs/:id', asyncHandler(jobHandlers.deleteJob));
 app.use(errorHandler);
 
 describe('jobs handlers', () => {
@@ -131,7 +132,7 @@ describe('jobs handlers', () => {
     it('returns 400 for invalid status', async () => {
       const res = await request(app).post('/jobs').send({ status: 'unknown' });
       expect(res.status).toBe(400);
-      expect(res.body.error.message).toBeTruthy();
+      expect(res.body.message).toBeTruthy();
     });
   });
 
