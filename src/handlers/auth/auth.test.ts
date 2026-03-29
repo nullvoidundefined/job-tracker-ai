@@ -3,6 +3,7 @@ import { errorHandler } from 'app/middleware/errorHandler/errorHandler.js';
 import { requireAuth } from 'app/middleware/requireAuth/requireAuth.js';
 import * as authRepo from 'app/repositories/auth/auth.js';
 import type { User } from 'app/schemas/auth.js';
+import { asyncHandler } from 'app/utils/asyncHandler.js';
 import { uuid } from 'app/utils/tests/uuids.js';
 import express from 'express';
 import session from 'express-session';
@@ -20,9 +21,9 @@ app.use(express.json());
 app.use(
   session({ secret: 'test-secret', resave: false, saveUninitialized: false }),
 );
-app.post('/register', authHandlers.register);
-app.post('/login', authHandlers.login);
-app.post('/logout', authHandlers.logout);
+app.post('/register', asyncHandler(authHandlers.register));
+app.post('/login', asyncHandler(authHandlers.login));
+app.post('/logout', asyncHandler(authHandlers.logout));
 app.get(
   '/me',
   (req, res, next) => {
@@ -37,7 +38,7 @@ app.get(
     next();
   },
   requireAuth,
-  authHandlers.me,
+  asyncHandler(authHandlers.me),
 );
 app.use(errorHandler);
 
@@ -88,7 +89,7 @@ describe('auth handlers', () => {
         .send({ email: 'user@example.com', password: 'password123' });
 
       expect(res.status).toBe(409);
-      expect(res.body.error.message).toBe('Email already registered');
+      expect(res.body.message).toBe('Email already registered');
     });
     it('returns 500 on other errors', async () => {
       vi.mocked(authRepo.createUser).mockRejectedValueOnce(
@@ -100,7 +101,7 @@ describe('auth handlers', () => {
         .send({ email: 'user@example.com', password: 'password123' });
 
       expect(res.status).toBe(500);
-      expect(res.body.error.message).toBeDefined();
+      expect(res.body.message).toBeDefined();
     });
   });
 
@@ -118,7 +119,7 @@ describe('auth handlers', () => {
         .send({ email: 'nobody@example.com', password: 'any' });
 
       expect(res.status).toBe(401);
-      expect(res.body.error.message).toBe('Invalid email or password');
+      expect(res.body.message).toBe('Invalid email or password');
     });
     it('returns 401 when password invalid', async () => {
       vi.mocked(authRepo.findUserByEmail).mockResolvedValueOnce(mockUser);
@@ -129,7 +130,7 @@ describe('auth handlers', () => {
         .send({ email: 'user@example.com', password: 'wrong' });
 
       expect(res.status).toBe(401);
-      expect(res.body.error.message).toBe('Invalid email or password');
+      expect(res.body.message).toBe('Invalid email or password');
     });
     it('returns 200 and sets cookie when valid', async () => {
       vi.mocked(authRepo.findUserByEmail).mockResolvedValueOnce(mockUser);
@@ -158,7 +159,7 @@ describe('auth handlers', () => {
         .send({ email: 'user@example.com', password: 'password123' });
 
       expect(res.status).toBe(500);
-      expect(res.body.error.message).toBeDefined();
+      expect(res.body.message).toBeDefined();
     });
   });
 
@@ -173,7 +174,7 @@ describe('auth handlers', () => {
     it('returns 401 when not authenticated', async () => {
       const res = await request(app).get('/me');
       expect(res.status).toBe(401);
-      expect(res.body.error.message).toBe('Authentication required');
+      expect(res.body.message).toBe('Authentication required');
     });
     it('returns 200 with user when req.user set', async () => {
       const res = await request(app).get('/me').set('x-test-user', '1');
