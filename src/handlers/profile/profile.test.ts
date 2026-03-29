@@ -1,5 +1,7 @@
 import * as profileHandlers from 'app/handlers/profile/profile.js';
+import { errorHandler } from 'app/middleware/errorHandler/errorHandler.js';
 import * as profileRepo from 'app/repositories/profile/profile.js';
+import { asyncHandler } from 'app/utils/asyncHandler.js';
 import express from 'express';
 import session from 'express-session';
 import supertest from 'supertest';
@@ -8,6 +10,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 vi.mock('app/repositories/profile/profile.js', () => ({
   getProfile: vi.fn(),
   upsertProfile: vi.fn(),
+}));
+vi.mock('app/utils/logs/logger.js', () => ({
+  logger: { error: vi.fn(), info: vi.fn(), warn: vi.fn(), debug: vi.fn() },
 }));
 
 const USER_ID = '00000000-0000-0000-0000-000000000002';
@@ -37,8 +42,9 @@ function buildApp() {
     };
     next();
   });
-  app.get('/profile', profileHandlers.getProfile);
-  app.put('/profile', profileHandlers.updateProfile);
+  app.get('/profile', asyncHandler(profileHandlers.getProfile));
+  app.put('/profile', asyncHandler(profileHandlers.updateProfile));
+  app.use(errorHandler);
   return app;
 }
 
@@ -57,7 +63,7 @@ describe('GET /profile', () => {
     vi.mocked(profileRepo.getProfile).mockResolvedValueOnce(null);
     const res = await supertest(buildApp()).get('/profile');
     expect(res.status).toBe(404);
-    expect(res.body.error.message).toBe('Profile not found');
+    expect(res.body.message).toBe('Profile not found');
   });
 });
 
@@ -82,7 +88,7 @@ describe('PUT /profile', () => {
       .put('/profile')
       .send({ years_of_experience: 999 });
     expect(res.status).toBe(400);
-    expect(res.body.error.message).toBeTruthy();
+    expect(res.body.message).toBeTruthy();
   });
 
   it('returns 400 when job_title exceeds 255 characters', async () => {
@@ -90,6 +96,6 @@ describe('PUT /profile', () => {
       .put('/profile')
       .send({ job_title: 'a'.repeat(256) });
     expect(res.status).toBe(400);
-    expect(res.body.error.message).toBeTruthy();
+    expect(res.body.message).toBeTruthy();
   });
 });

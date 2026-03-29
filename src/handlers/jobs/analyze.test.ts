@@ -3,6 +3,7 @@ import { errorHandler } from 'app/middleware/errorHandler/errorHandler.js';
 import { requireAuth } from 'app/middleware/requireAuth/requireAuth.js';
 import type { Job } from 'app/schemas/job.js';
 import * as analyzerService from 'app/services/analyzer.service.js';
+import { asyncHandler } from 'app/utils/asyncHandler.js';
 import { uuid } from 'app/utils/tests/uuids.js';
 import express from 'express';
 import session from 'express-session';
@@ -50,7 +51,7 @@ app.use((req, _res, next) => {
   next();
 });
 app.use(requireAuth);
-app.post('/jobs/analyze', analyzeJob);
+app.post('/jobs/analyze', asyncHandler(analyzeJob));
 app.use(errorHandler);
 
 describe('POST /jobs/analyze', () => {
@@ -70,7 +71,7 @@ describe('POST /jobs/analyze', () => {
   it('returns 400 when raw_description is missing', async () => {
     const res = await request(app).post('/jobs/analyze').send({});
     expect(res.status).toBe(400);
-    expect(res.body.error.message).toBeTruthy();
+    expect(res.body.message).toBeTruthy();
   });
 
   it('returns 400 when raw_description is too short', async () => {
@@ -78,7 +79,7 @@ describe('POST /jobs/analyze', () => {
       .post('/jobs/analyze')
       .send({ raw_description: 'short' });
     expect(res.status).toBe(400);
-    expect(res.body.error.message).toContain('at least 20 characters');
+    expect(res.body.message).toContain('at least 20 characters');
   });
 
   it('returns 502 when AI analysis fails', async () => {
@@ -90,8 +91,6 @@ describe('POST /jobs/analyze', () => {
         'A long enough job description for testing purposes here',
     });
     expect(res.status).toBe(502);
-    expect(res.body.error.message).toBe(
-      'AI analysis failed. Please try again.',
-    );
+    expect(res.body.message).toBe('AI analysis failed. Please try again.');
   });
 });
