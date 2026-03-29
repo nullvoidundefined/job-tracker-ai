@@ -12,9 +12,7 @@ export function expectError(
   message: string,
 ): void {
   expect(res.status).toBe(status);
-  expect((res.body?.error as { message?: string } | undefined)?.message).toBe(
-    message,
-  );
+  expect(res.body.message).toBe(message);
 }
 
 /** Asserts list-handler response: 200, body.data (serialized), body.meta (total, limit 50, offset 0). */
