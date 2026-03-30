@@ -1,3 +1,4 @@
+packages: []
 ignoredBuiltDependencies:
   - '@bottomlessmargaritas/claude-architecture-prompts'
   - '@bottomlessmargaritas/formatting-configs'
