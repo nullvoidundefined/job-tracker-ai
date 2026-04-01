@@ -87,7 +87,7 @@ app.use(
     cookie: {
       httpOnly: true,
       secure: isProduction(),
-      sameSite: 'lax',
+      sameSite: isProduction() ? 'none' : 'lax',
       maxAge: SESSION_TTL_MS,
     },
   }),

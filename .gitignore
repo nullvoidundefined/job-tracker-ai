@@ -5,4 +5,5 @@ dist
 coverage
 .agents
 # Claude Code local settings
-.claude/
+.claude/*
+!.claude/bottomlessmargaritas/
