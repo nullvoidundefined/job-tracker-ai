@@ -8,8 +8,8 @@
     "scripts": {
         "build": "tsc && tsc-alias -p tsconfig.json",
         "dev": "tsx watch src/index.ts",
-        "format": "prettier --config prettier.config.bottomlessmargaritas.js --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
-        "format:check": "prettier --config prettier.config.bottomlessmargaritas.js --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+        "format": "prettier --config prettier.config.bottomlessmargaritas.mjs --write \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
+        "format:check": "prettier --config prettier.config.bottomlessmargaritas.mjs --check \"**/*.{js,jsx,ts,tsx,json,css,scss,md}\"",
         "lint": "eslint --config eslint.config.bottomlessmargaritas.js .",
         "lint:fix": "eslint --config eslint.config.bottomlessmargaritas.js . --fix",
         "migrate:down": "node-pg-migrate down",
