@@ -155,3 +155,5 @@ export function startServer(): void {
   process.on('SIGTERM', () => shutdown('SIGTERM'));
   process.on('SIGINT', () => shutdown('SIGINT'));
 }
+
+export { app };

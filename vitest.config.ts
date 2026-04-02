@@ -32,7 +32,12 @@ export default defineConfig({
       },
     },
     environment: 'node',
-    exclude: [...configDefaults.exclude, 'migrations/**'],
+    exclude: [
+      ...configDefaults.exclude,
+      'migrations/**',
+      'dist/**',
+      'src/__integration__/**',
+    ],
     globals: true,
   },
 });

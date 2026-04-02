@@ -12,6 +12,21 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -36,8 +51,21 @@ jobs:
       - name: Check formatting
         run: npm run format:check
 
-      - name: Run tests with coverage
+      - name: Run unit tests with coverage
         run: npm run test:coverage
+
+      - name: Run migrations
+        run: npx node-pg-migrate up
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/test
+
+      - name: Integration tests
+        run: npm run test:integration
+        env:
+          DATABASE_URL: postgres://test:test@localhost:5432/test
+          NODE_ENV: test
+          SESSION_SECRET: test-secret
+          ANTHROPIC_API_KEY: sk-ant-test
 
       - name: npm audit (high severity and above)
         run: npm audit --audit-level=high
